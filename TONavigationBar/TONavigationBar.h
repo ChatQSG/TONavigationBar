@@ -24,12 +24,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol TONavigationBarDelegate
+-(void) didChangedNavigationBar:(BOOL) isShow;
+@end
+
 /** A `UINavigationBar` subclass that allows the bar to transition to a clear state with just the bar buttons visible. */
 @interface TONavigationBar : UINavigationBar
 
 /** Sets whether the bar background and title label are hidden, and the tint color is white. */
 @property (nonatomic, assign) BOOL backgroundHidden;
 
+@property (weak) id <TONavigationBarDelegate> to_delegate;
 
 /** Since this view internally controls `tintColor`, set this property if you wish to override
  the bar's tint color to something different than the system default when the bar is not hidden. */

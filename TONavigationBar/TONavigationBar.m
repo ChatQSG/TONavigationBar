@@ -39,6 +39,9 @@
 // An internal reference to the content view that holds all of visible subviews of the navigation bar
 @property (nonatomic, weak) UIView *contentView;
 
+// An internal reference to save current visible ability of bar
+@property (nonatomic, assign) BOOL barVisible;
+
 @end
 
 @implementation TONavigationBar
@@ -102,8 +105,8 @@
     [self insertSubview:self.backgroundView atIndex:0];
     
     // Ensure the separator is placed above the background view
-    [self insertSubview:self.separatorView atIndex:1];
-    
+//    [self insertSubview:self.separatorView atIndex:1];
+
     // Because `UINavigationController` positions the bar below the
     // status bar, extend the background view upwards to the top of the screen.
     CGRect frame = self.bounds;
@@ -115,7 +118,7 @@
     frame = self.bounds;
     frame.origin.y = frame.size.height - _separatorHeight;
     frame.size.height = _separatorHeight;
-    self.separatorView.frame = frame;
+//    self.separatorView.frame = frame;
 
     // This method will be called at the start of each navigation item
     // transition, by which point we will know if it needs to be surpressed
@@ -151,8 +154,8 @@
     }
     
     // Configure the separator color
-    CGFloat greyColor = darkMode ? 0.4f : 0.75f;
-    self.separatorView.backgroundColor = [UIColor colorWithWhite:greyColor alpha:1.0f];
+//    CGFloat greyColor = darkMode ? 0.4f : 0.75f;
+//    self.separatorView.backgroundColor = [UIColor colorWithWhite:greyColor alpha:1.0f];
 }
 
 - (void)updateBackgroundVisibilityForScrollView
@@ -169,6 +172,11 @@
     offsetHeight = MIN(offsetHeight, totalHeight);
 
     BOOL barShouldBeVisible = offsetHeight > 0.0f + FLT_EPSILON;
+
+    if (_barVisible != barShouldBeVisible) {
+        _barVisible = barShouldBeVisible;
+        [_to_delegate didChangedNavigationBar:_barVisible];
+    }
     
     // Layout the background view to slide into view
     CGRect frame = self.backgroundView.frame;
@@ -185,24 +193,24 @@
     self.backgroundView.frame = frame;
     
     // Change alpha of the separator
-    self.separatorView.alpha = MAX(0.0f, offsetHeight / (barHeight * 0.5f));
-    
+//    self.separatorView.alpha = MAX(0.0f, offsetHeight / (barHeight * 0.5f));
+
     // Change the alpha of the title label/view
     BOOL hidden = !barShouldBeVisible;
-    CGFloat alpha = MAX(offsetHeight - (barHeight * 0.75f), 0.0f) / (barHeight * 0.25f);
-    
+//    CGFloat alpha = MAX(offsetHeight - (barHeight * 0.75f), 0.0f) / (barHeight * 0.25f);
+
     if (self.topItem.titleView) {
         self.topItem.titleView.hidden = hidden;
-        self.topItem.titleView.alpha = alpha;
+//        self.topItem.titleView.alpha = alpha;
     }
     else {
         self.titleTextLabel.hidden = hidden;
-        self.titleTextLabel.alpha = alpha;
+//        self.titleTextLabel.alpha = alpha;
     }
     
     // Change the tint color once it has passed the middle of the bar
-    self.tintColor = (offsetHeight > barHeight * 0.5f) ? self.preferredTintColor : [UIColor whiteColor];
-    
+//    self.tintColor = (offsetHeight > barHeight * 0.5f) ? self.preferredTintColor : [UIColor whiteColor];
+
     // Change the status bar colour once the offset has reached its midpoint
     CGFloat statusBarHeight = totalHeight - barHeight;
     self.barStyle = (offsetHeight > barHeight + (statusBarHeight * 0.5f)) ? self.preferredBarStyle : UIBarStyleBlack;
@@ -238,8 +246,8 @@
     // An animation block that will handle transitioning all of the views during a 'non-hidden-to-hidden' animation
     void (^animationBlock)(BOOL) = ^(BOOL _hidden) {
         self.backgroundView.alpha = _hidden ? 0.0f : 1.0f;
-        self.separatorView.alpha = _hidden ? 0.0f : 1.0f;
-        self.tintColor = _hidden ? [UIColor whiteColor] : self.preferredTintColor;
+//        self.separatorView.alpha = _hidden ? 0.0f : 1.0f;
+//        self.tintColor = _hidden ? [UIColor whiteColor] : self.preferredTintColor;
 
         // iOS 11 is pretty broken. If this code isn't set, the title labels
         // may sometimes fail to switch to the correct colour
